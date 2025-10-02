@@ -1,47 +1,64 @@
 name: build-test-deploy
-
 on: push
-
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    
       - name: checkout
         uses: actions/checkout@v5
-        
       - name: use node
         uses: actions/setup-node@v5
         with:
           node-version: '24.x'
-
       - name: npm install
         run: npm install
-
       - name: npm run build
         run: npm run build
-
   test:
-  
     needs: build
-  
     runs-on: ubuntu-latest
-
     steps:
-    
       - name: checkout
         uses: actions/checkout@v5
-        
       - name: use node
         uses: actions/setup-node@v5
         with:
           node-version: '24.x'
-
       - name: npm install
         run: npm install
-
       - name: npm test
         run: npm test
+  deploy:
+    needs: test
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: use node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24.x'
+      - name: configure github pages
+        uses: actions/configure-pages@v5
+        with:
+          static_site_generator: next
+      - name: npm install
+        run: npm install
+      - name: npm run build
+        run: npm run build
+      - name: upload artifacts
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: './out'
+      - name: deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
