@@ -8,10 +8,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
-      steps:
+    steps:
 
-        - name: check out repository code
-          uses: actions/checkout@v5
+      - name: check out repository code
+        uses: actions/checkout@v5
 
-        - name: say hello
-          run: echo "$(cat hello_world.txt)"
+      - name: say hello
+        run: echo "$(cat hello_world.txt)"
