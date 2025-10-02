@@ -23,3 +23,25 @@ jobs:
 
       - name: npm run build
         run: npm run build
+
+  test:
+  
+    needs: build
+  
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - name: checkout
+        uses: actions/checkout@v5
+        
+      - name: use node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24.x'
+
+      - name: npm install
+        run: npm install
+
+      - name: npm test
+        run: npm test
